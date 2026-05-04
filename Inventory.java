@@ -45,4 +45,8 @@ public class Inventory {
             System.out.println("Item not found!");
         }
     }
+    // MARIAM
+    public ArrayList<Item> getAllItems() {
+        return items;
+    }
 }

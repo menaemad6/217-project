@@ -45,4 +45,21 @@ public class Receipt {
         System.out.println("Tax value: " + taxValue);
         System.out.println("Final total: " + finalTotal);
     }
+
+    // MAVIE
+    public String getReceiptText() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("===== RECEIPT =====\n");
+        for (CartItem ci : items) {
+            sb.append("Item: ").append(ci.getItem().getName())
+              .append(" | Qty: ").append(ci.getQuantity())
+              .append(" | Price: ").append(ci.getItem().getPrice()).append("\n");
+        }
+        sb.append("--------------------\n");
+        sb.append("Subtotal: ").append(totalBeforeTax).append("\n");
+        sb.append("Tax (14%): ").append(taxValue).append("\n");
+        sb.append("Total: ").append(finalTotal).append("\n");
+        sb.append("====================");
+        return sb.toString();
+    }
 }

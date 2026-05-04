@@ -1,4 +1,6 @@
 // JULIANO
+import java.util.ArrayList;
+
 public class SystemController {
 
     // JULIANO
@@ -80,5 +82,38 @@ public class SystemController {
     // ABANOB
     public void displayCart() {
         cart.displayCart();
+    }
+
+    // JULIANO
+    public ArrayList<Item> getAllInventoryItems() {
+        return inventory.getAllItems();
+    }
+
+    // ABANOB
+    public ArrayList<CartItem> getCartItems() {
+        return cart.getCartItems();
+    }
+
+    // ABANOB
+    public double getCartTotal() {
+        return cart.calculateTotal();
+    }
+
+    // MAVIE
+    public String processCheckout() {
+        if (cart.getCartItems().isEmpty()) {
+            return "Cart is empty.";
+        } else {
+            Receipt receipt = new Receipt();
+            receipt.generateReceipt(cart);
+            String receiptText = receipt.getReceiptText();
+            
+            // JULIANO
+            salesTracker.recordSale(cart);
+            // ABANOB
+            cart.clearCart();
+            
+            return receiptText;
+        }
     }
 }
