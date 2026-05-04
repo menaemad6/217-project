@@ -1,189 +1,48 @@
-// ABANOB
-
-import java.util.ArrayList;
-
-// ================== Item Class ==================
-class Item {
-    private int id;
-    private String name;
-    private String category;
-    private double price;
-    private int quantity;
-
-    public Item(int id, String name, String category, double price, int quantity) {
-        this.id = id;
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.quantity = quantity;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-}
-
-// ================== CartItem Class ==================
-class CartItem {
-    private Item item;
-    private int quantity;
-
-    public CartItem(Item item, int quantity) {
-        this.item = item;
-        this.quantity = quantity;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-}
-
-// ================== Cart Class ==================
-class Cart {
-
-    private ArrayList<CartItem> cartItems;
-
-    public Cart() {
-        cartItems = new ArrayList<>();
-    }
-
-    // Add item to cart
-    public void addToCart(Item item, int quantity) {
-
-        if (item.getQuantity() < quantity) {
-            System.out.println("Not enough stock!");
-            return;
-        }
-
-        // If item already exists in cart → increase quantity
-        for (CartItem ci : cartItems) {
-            if (ci.getItem().getId() == item.getId()) {
-                ci.setQuantity(ci.getQuantity() + quantity);
-                item.setQuantity(item.getQuantity() - quantity);
-                return;
-            }
-        }
-
-        // New item
-        cartItems.add(new CartItem(item, quantity));
-        item.setQuantity(item.getQuantity() - quantity);
-    }
-
-    // Remove item from cart
-    public void removeFromCart(int id) {
-        for (CartItem ci : cartItems) {
-            if (ci.getItem().getId() == id) {
-
-                // Return quantity back to stock
-                ci.getItem().setQuantity(
-                    ci.getItem().getQuantity() + ci.getQuantity()
-                );
-
-                cartItems.remove(ci);
-                System.out.println("Item removed from cart.");
-                return;
-            }
-        }
-        System.out.println("Item not found.");
-    }
-
-    // Calculate total price
-    public double calculateTotal() {
-        double total = 0;
-
-        for (CartItem ci : cartItems) {
-            total += ci.getItem().getPrice() * ci.getQuantity();
-        }
-
-        return total;
-    }
-
-    // Calculate total with tax
-    public double calculateTotalWithTax(double taxRate) {
-        double total = calculateTotal();
-        return total + (total * taxRate);
-    }
-
-    // Clear cart (without returning stock after purchase)
-    public void clearCart() {
-        cartItems.clear();
-    }
-
-    // Display cart items
-    public void displayCart() {
-        System.out.println("\n===== CART =====");
-
-        for (CartItem ci : cartItems) {
-            System.out.println(
-                "ID: " + ci.getItem().getId() +
-                " | Name: " + ci.getItem().getName() +
-                " | Qty: " + ci.getQuantity() +
-                " | Price: " + ci.getItem().getPrice()
-            );
-        }
-    }
-}
-
-// ================== Main Class ==================
 public class Main {
     public static void main(String[] args) {
+        // JULIANO
+        SystemController controller = new SystemController();
 
-        // Sample inventory items
-        Item item1 = new Item(1, "Milk", "Food", 20.0, 10);
-        Item item2 = new Item(2, "Headphones", "Electronics", 300.0, 5);
+        // Adding items to inventory (MARIAM's logic via JULIANO's controller)
+        // JULIANO
+        controller.addItemToInventory(1, "Milk", "Food", 20.0, 10);
+        // JULIANO
+        controller.addItemToInventory(2, "Bread", "Food", 5.0, 30);
+        // JULIANO
+        controller.addItemToInventory(3, "Headphones", "Electronics", 300.0, 5);
 
-        Cart cart = new Cart();
+        System.out.println("--- Initial Inventory Search ---");
+        // MARIAM's search via JULIANO's controller
+        // JULIANO
+        System.out.println(controller.searchItem(1));
+        // JULIANO
+        System.out.println(controller.searchItem("Bread"));
 
-        // Add items
-        cart.addToCart(item1, 2);
-        cart.addToCart(item2, 1);
+        System.out.println("\n--- Processing Purchase ---");
+        // ABANOB's cart logic via JULIANO's controller
+        // JULIANO
+        controller.addItemToCart(1, 2);
+        // JULIANO
+        controller.addItemToCart(3, 1);
+        
+        // ABANOB
+        controller.displayCart();
 
-        // Display cart
-        cart.displayCart();
+        System.out.println("\n--- Checkout ---");
+        // Integration of MAVIE (Receipt), ABANOB (Cart), and JULIANO (Sales)
+        // JULIANO
+        controller.checkout();
 
-        // Show total
-        double total = cart.calculateTotal();
-        System.out.println("\nTotal: " + total);
+        System.out.println("\n--- Daily Sales Report ---");
+        // JULIANO
+        System.out.println("Total Sales: $" + controller.getTotalSales());
+        // JULIANO
+        System.out.println("Total Items Sold: " + controller.getTotalItemsSold());
 
-        // Show total with tax (10%)
-        double totalWithTax = cart.calculateTotalWithTax(0.10);
-        System.out.println("Total with Tax: " + totalWithTax);
-
-        // Remove item
-        cart.removeFromCart(1);
-
-        cart.displayCart();
-
-        // Checkout
-        System.out.println("\nCheckout completed.");
-        cart.clearCart();
+        System.out.println("\n--- Restocking ---");
+        // MARIAM
+        controller.restockItem(1, 5);
+        // JULIANO
+        System.out.println("Milk after restock: " + controller.searchItem(1));
     }
 }
