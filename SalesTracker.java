@@ -36,4 +36,10 @@ public class SalesTracker {
     public int getTotalItemsSold() {
         return totalItemsSold;
     }
+
+    // MINA - Added for Data Persistence
+    public void setSalesData(double totalSales, int totalItemsSold) {
+        this.totalSales = totalSales;
+        this.totalItemsSold = totalItemsSold;
+    }
 }

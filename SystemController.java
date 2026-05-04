@@ -1,105 +1,71 @@
+
 // JULIANO
 import java.util.ArrayList;
 
 public class SystemController {
 
-    // JULIANO
     private Inventory inventory;
-    // JULIANO
     private Cart cart;
-    // JULIANO
     private SalesTracker salesTracker;
+    // MINA
+    private DataManager dataManager;
 
-    // JULIANO
     public SystemController() {
         inventory = new Inventory();
         cart = new Cart();
         salesTracker = new SalesTracker();
+        // MINA
+        dataManager = new DataManager();
+        // MINA
+        loadData();
     }
 
-    // JULIANO
+    // MINA
+    private void loadData() {
+        ArrayList<Item> savedItems = dataManager.loadInventory();
+        for (Item item : savedItems) {
+            inventory.addItem(item);
+        }
+        double[] sales = dataManager.loadSales();
+        salesTracker.setSalesData(sales[0], (int) sales[1]);
+    }
+
+    // MINA
+    private void saveData() {
+        dataManager.saveInventory(inventory.getAllItems());
+        dataManager.saveSales(salesTracker.getTotalSales(), salesTracker.getTotalItemsSold());
+    }
+
     public void addItemToInventory(int id, String name, String category, double price, int quantity) {
         Item item = new Item(id, name, category, price, quantity);
         inventory.addItem(item);
+        // MINA
+        saveData();
     }
 
-    // JULIANO
     public Item searchItem(int id) {
         return inventory.searchById(id);
     }
 
-    // JULIANO
     public Item searchItem(String name) {
         return inventory.searchByName(name);
     }
 
-    // JULIANO
+    public void restockItem(int id, int quantity) {
+        inventory.restockItem(id, quantity);
+        // MINA
+        saveData();
+    }
+
     public void addItemToCart(int id, int quantity) {
         Item item = inventory.searchById(id);
         if (item != null) {
             cart.addToCart(item, quantity);
-        } else {
-            System.out.println("Item not found!");
+            // MINA
+            saveData();
         }
     }
 
-    // JULIANO
-    public void checkout() {
-        if (cart.getCartItems().isEmpty()) {
-            System.out.println("Cart is empty.");
-        } else {
-            // MAVIE
-            Receipt receipt = new Receipt();
-            // MAVIE
-            receipt.generateReceipt(cart);
-            // MAVIE
-            receipt.printReceipt();
-
-            // JULIANO
-            salesTracker.recordSale(cart);
-            // ABANOB
-            cart.clearCart(); 
-
-            System.out.println("Checkout completed successfully.");
-        }
-    }
-
-    // JULIANO
-    public double getTotalSales() {
-        return salesTracker.getTotalSales();
-    }
-
-    // JULIANO
-    public int getTotalItemsSold() {
-        return salesTracker.getTotalItemsSold();
-    }
-    
-    // MARIAM
-    public void restockItem(int id, int quantity) {
-        inventory.restockItem(id, quantity);
-    }
-    
-    // ABANOB
-    public void displayCart() {
-        cart.displayCart();
-    }
-
-    // JULIANO
-    public ArrayList<Item> getAllInventoryItems() {
-        return inventory.getAllItems();
-    }
-
-    // ABANOB
-    public ArrayList<CartItem> getCartItems() {
-        return cart.getCartItems();
-    }
-
-    // ABANOB
-    public double getCartTotal() {
-        return cart.calculateTotal();
-    }
-
-    // MAVIE
     public String processCheckout() {
         if (cart.getCartItems().isEmpty()) {
             return "Cart is empty.";
@@ -107,13 +73,35 @@ public class SystemController {
             Receipt receipt = new Receipt();
             receipt.generateReceipt(cart);
             String receiptText = receipt.getReceiptText();
-            
-            // JULIANO
             salesTracker.recordSale(cart);
-            // ABANOB
             cart.clearCart();
-            
+            // MINA
+            saveData();
             return receiptText;
         }
+    }
+
+    public ArrayList<Item> getAllInventoryItems() {
+        return inventory.getAllItems();
+    }
+
+    public ArrayList<CartItem> getCartItems() {
+        return cart.getCartItems();
+    }
+
+    public double getCartTotal() {
+        return cart.calculateTotal();
+    }
+
+    public double getTotalSales() {
+        return salesTracker.getTotalSales();
+    }
+
+    public int getTotalItemsSold() {
+        return salesTracker.getTotalItemsSold();
+    }
+
+    public void displayCart() {
+        cart.displayCart();
     }
 }

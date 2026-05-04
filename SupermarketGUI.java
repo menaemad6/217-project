@@ -1,13 +1,17 @@
+
+// MINA 
 import javax.swing.*;
 import java.awt.*;
 
 public class SupermarketGUI extends JFrame {
+    // MINA
     private SystemController controller;
     private JTextArea displayArea;
 
+    // MINA
     public SupermarketGUI(SystemController controller) {
         this.controller = controller;
-        
+
         // Window Setup
         setTitle("Supermarket System");
         setSize(500, 600);
@@ -21,14 +25,14 @@ public class SupermarketGUI extends JFrame {
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         add(titleLabel, BorderLayout.NORTH);
 
-        // 2. Display Area (Simplified)
+        // 2. Display Area
         displayArea = new JTextArea();
         displayArea.setEditable(false);
         displayArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
         displayArea.setBackground(new Color(245, 245, 245));
         add(new JScrollPane(displayArea), BorderLayout.CENTER);
 
-        // 3. Buttons Panel (Grid layout for simplicity)
+        // 3. Buttons Panel
         JPanel buttonPanel = new JPanel(new GridLayout(3, 2, 5, 5));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -53,9 +57,10 @@ public class SupermarketGUI extends JFrame {
         btnAddItem.addActionListener(e -> {
             try {
                 String idStr = JOptionPane.showInputDialog("Enter Item ID:");
-                if (idStr == null) return;
+                if (idStr == null)
+                    return;
                 int id = Integer.parseInt(idStr);
-                
+
                 Item existing = controller.searchItem(id);
                 if (existing != null) {
                     String qtyStr = JOptionPane.showInputDialog("Item exists. Enter quantity to add:");
@@ -67,7 +72,7 @@ public class SupermarketGUI extends JFrame {
                     int qty = Integer.parseInt(JOptionPane.showInputDialog("Enter Quantity:"));
                     controller.addItemToInventory(id, name, cat, price, qty);
                 }
-                btnInventory.doClick(); // Refresh view
+                btnInventory.doClick();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Invalid Input!");
             }
@@ -79,14 +84,11 @@ public class SupermarketGUI extends JFrame {
                 int id = Integer.parseInt(JOptionPane.showInputDialog("Enter Item ID to buy:"));
                 int qty = Integer.parseInt(JOptionPane.showInputDialog("Enter Quantity:"));
                 controller.addItemToCart(id, qty);
-                
-                displayArea.setText("--- CURRENT CART ---\n");
-                controller.displayCart(); // This prints to console, let's update display area instead
-                
+
                 StringBuilder sb = new StringBuilder("--- CURRENT CART ---\n");
                 for (CartItem ci : controller.getCartItems()) {
                     sb.append(ci.getItem().getName()).append(" x").append(ci.getQuantity())
-                      .append(" ($").append(ci.getItem().getPrice() * ci.getQuantity()).append(")\n");
+                            .append(" ($").append(ci.getItem().getPrice() * ci.getQuantity()).append(")\n");
                 }
                 sb.append("\nTotal: $").append(controller.getCartTotal());
                 displayArea.setText(sb.toString());
@@ -105,14 +107,13 @@ public class SupermarketGUI extends JFrame {
         // Action: View Sales
         btnSales.addActionListener(e -> {
             String salesInfo = String.format("--- DAILY SALES ---\nTotal Revenue: $%.2f\nItems Sold: %d",
-                controller.getTotalSales(), controller.getTotalItemsSold());
+                    controller.getTotalSales(), controller.getTotalItemsSold());
             displayArea.setText(salesInfo);
         });
 
         // Action: Exit
         btnExit.addActionListener(e -> System.exit(0));
 
-        // Add buttons to panel
         buttonPanel.add(btnInventory);
         buttonPanel.add(btnAddItem);
         buttonPanel.add(btnAddCart);
@@ -121,8 +122,6 @@ public class SupermarketGUI extends JFrame {
         buttonPanel.add(btnExit);
 
         add(buttonPanel, BorderLayout.SOUTH);
-
-        // Show welcome message
         displayArea.setText("Welcome to Supermarket POS\nClick 'View Inventory' to start.");
     }
 }
