@@ -1,5 +1,3 @@
-
-// JULIANO
 import java.util.ArrayList;
 
 public class SystemController {
